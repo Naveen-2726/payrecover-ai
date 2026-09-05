@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayRecover AI - Merchant Revenue Recovery Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains%20Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-icon">⚡</div>
+        <div class="brand-text">
+          <h1>PayRecover <span>AI</span></h1>
+          <p class="subtitle"><strong>Recover revenue from failed payments using AI.</strong> (Razorpay-Inspired Test Integration)</p>
+        </div>
+      </div>
+      <div class="nav-badges">
+        <button class="btn btn-amber btn-sm" onclick="toggleJudgeMode()">🏆 JUDGE MODE</button>
+        <span class="badge badge-success"><span class="pulse-dot"></span> ORCHESTRATOR ONLINE</span>
+        <span class="badge badge-indigo" id="audit-status-badge">🔒 SHA-256 LEDGER VERIFIED</span>
+      </div>
+    </header>
+
+    <!-- Payment Network Health Banner -->
+    <div class="card mb-3 p-3" style="background: rgba(15, 23, 42, 0.8); border-color: rgba(99, 102, 241, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <span class="font-bold text-sm text-indigo">🌐 LIVE PAYMENT NETWORK HEALTH MONITOR:</span>
+        </div>
+        <div style="display: flex; gap: 0.75rem; font-size: 0.8rem;">
+          <span>UPI Intent: <strong class="text-emerald">HEALTHY (94%)</strong></span>
+          <span>HDFC Netbanking: <strong class="text-amber">DEGRADED (58%)</strong></span>
+          <span>SBI Netbanking: <strong class="text-crimson">DOWN (42%)</strong></span>
+          <span>Cards (Visa/MC): <strong class="text-emerald">HEALTHY (91%)</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <main class="dashboard-body">
+      <!-- Executive KPI Cards -->
+      <section class="metrics-grid">
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">At-Risk Failed Volume</span>
+            <span class="metric-icon">📉</span>
+          </div>
+          <div class="metric-value" id="kpi-failed-volume">₹0.00</div>
+          <div class="metric-sub text-muted">Across failed payment webhooks</div>
+        </div>
+
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Net Recovered ARR</span>
+            <span class="metric-icon">💰</span>
+          </div>
+          <div class="metric-value text-emerald" id="kpi-recovered-arr">₹0.00</div>
+          <div class="metric-sub text-emerald" id="kpi-recovery-rate">0% Recovery Rate (+38.3% Uplift)</div>
+        </div>
+
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Unrecoverable ARR</span>
+            <span class="metric-icon">🚫</span>
+          </div>
+          <div class="metric-value text-crimson" id="kpi-unrecoverable">₹0.00</div>
+          <div class="metric-sub text-muted">Escalated to Human Review</div>
+        </div>
+
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">AI Recovery ROI</span>
+            <span class="metric-icon">🚀</span>
+          </div>
+          <div class="metric-value text-indigo" id="kpi-roi">0.0x</div>
+          <div class="metric-sub text-muted">Net ARR / AI Infrastructure Cost</div>
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="tab-pipeline">⚡ Live Recovery Pipeline</button>
+        <button class="tab-btn" data-tab="tab-control-tower">🏢 Control Tower</button>
+        <button class="tab-btn" data-tab="tab-intelligence">🧠 Payment Intelligence</button>
+        <button class="tab-btn" data-tab="tab-subscriptions">🔁 Subscriptions</button>
+        <button class="tab-btn" data-tab="tab-scenarios">🧪 6 Demo Scenarios</button>
+        <button class="tab-btn" data-tab="tab-attribution">💰 Recovery Attribution</button>
+        <button class="tab-btn" data-tab="tab-benchmark">📊 AI vs Baseline Experiment</button>
+        <button class="tab-btn" data-tab="tab-simulator">🧪 What-If Strategy Simulator</button>
+        <button class="tab-btn" data-tab="tab-human">👤 Human Review Queue (<span id="human-queue-count">0</span>)</button>
+        <button class="tab-btn" data-tab="tab-audit">📜 Cryptographic Audit Ledger</button>
+      </div>
+
+      <div id="tab-control-tower" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Revenue Recovery Control Tower</h3>
+              <p class="card-sub">All values are reduced from normalized synthetic transaction and subscription records.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadControlTower()">🔄 Refresh Metrics</button>
+          </div>
+          <div class="metrics-grid mt-3" id="control-tower-metrics"></div>
+        </div>
+      </div>
+
+      <div id="tab-intelligence" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Recovery Opportunities</h3>
+              <p class="card-sub">Ranked unresolved revenue opportunities from payment and subscription records.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadOpportunities()">🔄 Refresh Opportunities</button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="custom-table"><thead><tr><th>Payment</th><th>Priority</th><th>Opportunity Value</th><th>Recovery Probability</th><th>Recommended Action</th><th>Replay</th></tr></thead><tbody id="opportunities-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-subscriptions" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Subscription Recovery Records</h3>
+              <p class="card-sub">Synthetic/demo subscription charges normalized into the payment transaction model.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadSubscriptions()">🔄 Refresh Records</button>
+          </div>
+          <div class="metrics-grid mt-3" id="subscription-metrics"></div>
+          <div class="table-responsive mt-3">
+            <table class="custom-table"><thead><tr><th>Subscription</th><th>Amount</th><th>Action</th><th>Final State</th><th>Audit</th></tr></thead><tbody id="subscription-records"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Pipeline -->
+      <div id="tab-pipeline" class="tab-content active">
+        <div class="grid-2col mb-4">
+          <!-- Merchant Insights Card -->
+          <div class="card">
+            <h3>💡 Real-Time AI Merchant Insights</h3>
+            <p class="card-sub">Data-driven observations extracted directly from transaction statistics.</p>
+            <div id="merchant-insights-list" class="insights-container mt-3">
+              <!-- Dynamic Insights -->
+            </div>
+          </div>
+
+          <!-- Webhook Quick Injector -->
+          <div class="card">
+            <h3>⚡ Razorpay Webhook Event Injector</h3>
+            <p class="card-sub">Inject simulated failed payments to trigger live AI Orchestration.</p>
+            <form id="sim-form" onsubmit="handleSimulateWebhook(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group mb-2">
+                  <label>Issuing Bank</label>
+                  <select id="sim-bank" class="form-control">
+                    <option value="HDFC">HDFC Bank</option>
+                    <option value="ICICI">ICICI Bank</option>
+                    <option value="SBI">SBI Bank</option>
+                    <option value="AXIS">Axis Bank</option>
+                  </select>
+                </div>
+                <div class="form-group mb-2">
+                  <label>Amount (₹)</label>
+                  <input type="number" id="sim-amount" class="form-control" value="2999">
+                </div>
+              </div>
+              <div class="form-group mb-2">
+                <label>Failure Code</label>
+                <select id="sim-error-code" class="form-control">
+                  <option value="BAD_REQUEST_PAYMENT_TIMED_OUT">BAD_REQUEST_PAYMENT_TIMED_OUT (Late Auth Protection)</option>
+                  <option value="GATEWAY_ERROR">GATEWAY_ERROR (Downtime Method Switch)</option>
+                  <option value="CUSTOMER_INSUFFICIENT_FUNDS">CUSTOMER_INSUFFICIENT_FUNDS (WhatsApp PayLink)</option>
+                  <option value="EXPIRED_CARD">EXPIRED_CARD (Permanent Failure)</option>
+                  <option value="FORCE_FAILURE_GATEWAY_TIMEOUT">FORCE_FAILURE_GATEWAY_TIMEOUT (Circuit Breaker)</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-emerald btn-block mt-2">⚡ Inject Webhook Event</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Payment Recovery Pipeline & Orchestrator Inspector</h3>
+              <p class="card-sub">Monitors failed payment webhooks, performs ML propensity scoring, and optimizes expected recovery value.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadTransactions()">🔄 Refresh Pipeline</button>
+          </div>
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>Amount</th>
+                  <th>Bank / Method</th>
+                  <th>Failure Category</th>
+                  <th>Customer (Masked PII)</th>
+                  <th>AI Recommended Action</th>
+                  <th>Expected Value</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-tbody">
+                <tr><td colspan="9" class="text-center py-4">Loading pipeline...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: 6 Demo Scenarios -->
+      <div id="tab-scenarios" class="tab-content">
+        <div class="card full-card">
+          <h3>🧪 6 Deterministic Razorpay Demo Scenarios</h3>
+          <p class="card-sub mb-4">Click any scenario button to trigger its end-to-end execution through the payment recovery engine.</p>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem;">
+            <div class="card" style="border-left: 4px solid var(--color-emerald);">
+              <h4 class="text-emerald">Scenario 1: Temporary Bank Failure</h4>
+              <p class="text-sm text-muted mb-2">HDFC timeout error $\rightarrow$ Smart Retry scheduled at optimal bank uptime window.</p>
+              <button class="btn btn-emerald btn-sm" onclick="runScenario('SCENARIO_1')">⚡ Execute Scenario 1</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--color-indigo);">
+              <h4 class="text-indigo">Scenario 2: Bank Downtime Method Switch</h4>
+              <p class="text-sm text-muted mb-2">SBI Netbanking DOWN (42% SR) $\rightarrow$ Switches routing to healthy UPI Intent.</p>
+              <button class="btn btn-indigo btn-sm" onclick="runScenario('SCENARIO_2')">⚡ Execute Scenario 2</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--color-amber);">
+              <h4 class="text-amber">Scenario 3: Late Authorization Protection</h4>
+              <p class="text-sm text-muted mb-2">Timeout error $\rightarrow$ Enters POTENTIALLY_LATE_AUTHORIZABLE state. Cancels retry when captured arrives.</p>
+              <button class="btn btn-amber btn-sm" onclick="runScenario('SCENARIO_3')">⚡ Execute Scenario 3</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--color-emerald);">
+              <h4 class="text-emerald">Scenario 4: Insufficient Funds</h4>
+              <p class="text-sm text-muted mb-2">Low balance $\rightarrow$ 1-Click WhatsApp PayLink generated with 5% dynamic incentive.</p>
+              <button class="btn btn-emerald btn-sm" onclick="runScenario('SCENARIO_4')">⚡ Execute Scenario 4</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--color-crimson);">
+              <h4 class="text-crimson">Scenario 5: Permanent Failure</h4>
+              <p class="text-sm text-muted mb-2">Expired Card $\rightarrow$ System halts automation immediately to avoid fees.</p>
+              <button class="btn btn-outline btn-sm" onclick="runScenario('SCENARIO_5')" style="color: var(--color-crimson); border-color: var(--color-crimson);">⚡ Execute Scenario 5</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--color-crimson);">
+              <h4 class="text-crimson">Scenario 6: Circuit Breaker Escalation</h4>
+              <p class="text-sm text-muted mb-2">3 consecutive timeouts $\rightarrow$ Circuit breaker triggers and escalates to Human Queue.</p>
+              <button class="btn btn-outline btn-sm" onclick="runScenario('SCENARIO_6')" style="color: var(--color-crimson); border-color: var(--color-crimson);">⚡ Execute Scenario 6</button>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <h4>Scenario Output Console</h4>
+            <div id="scenario-output-box" class="code-box">
+              Click any scenario above to view live execution logs...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Recovery Attribution -->
+      <div id="tab-attribution" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>💰 Recovered Revenue Attribution Breakdown</h3>
+              <p class="card-sub">Actual net ARR recovered categorized by specific recovery action taken.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadAttribution()">🔄 Refresh Attribution</button>
+          </div>
+          <div id="attribution-cards-grid" class="metrics-grid mt-3">
+            <!-- Dynamic Attribution Cards -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: AI vs Baseline Benchmark -->
+      <div id="tab-benchmark" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>AI vs Static Baseline Experiment (Real Batch Evaluation)</h3>
+              <p class="card-sub">Runs a side-by-side comparison on the exact same 60 transaction synthetic test batch.</p>
+            </div>
+            <button class="btn btn-indigo" onclick="loadBenchmark()">📊 Run Benchmark Batch</button>
+          </div>
+
+          <div class="metrics-grid mt-3">
+            <div class="card">
+              <span class="metric-title">Static Retry Baseline</span>
+              <div class="metric-value text-muted" id="bench-base-rate">0%</div>
+              <p class="text-sm text-muted" id="bench-base-rev">Net Revenue: ₹0</p>
+              <small class="text-muted" id="bench-base-att">Attempts: 0</small>
+            </div>
+            <div class="card" style="border-color: var(--color-indigo);">
+              <span class="metric-title text-indigo">PayRecover AI Orchestration</span>
+              <div class="metric-value text-emerald" id="bench-ai-rate">0%</div>
+              <p class="text-sm text-emerald font-bold" id="bench-ai-rev">Net Revenue: ₹0</p>
+              <small class="text-muted" id="bench-ai-att">Attempts: 0</small>
+            </div>
+            <div class="card" style="border-color: var(--color-emerald);">
+              <span class="metric-title text-emerald">Net Revenue Uplift</span>
+              <div class="metric-value text-emerald" id="bench-uplift-val">+₹0.00</div>
+              <p class="text-sm text-emerald" id="bench-uplift-pct">+0% Net Value Increase</p>
+            </div>
+          </div>
+          <div class="code-box mt-3" id="bench-confidence-box">Confidence interval status will appear after the benchmark runs.</div>
+
+          <div class="code-box mt-3" id="bench-json-box">
+            Click 'Run Benchmark Batch' to evaluate AI vs Static Baseline...
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: What-If Strategy Simulator -->
+      <div id="tab-simulator" class="tab-content">
+        <div class="grid-2col">
+          <div class="card">
+            <h3>What-If Recovery Strategy Simulator</h3>
+            <p class="card-sub">Simulate custom merchant guardrails and policy changes against historical batch data.</p>
+            
+            <form id="sim-policy-form" onsubmit="handleRunSimulator(event)" class="mt-3">
+              <div class="form-group">
+                <label>Max Retries Cap</label>
+                <input type="number" id="sim-cfg-retries" class="form-control" value="3" min="1" max="5">
+              </div>
+              <div class="form-group mt-2">
+                <label>Max Dynamic Discount Cap (%)</label>
+                <input type="number" id="sim-cfg-discount" class="form-control" value="10" min="0" max="20">
+              </div>
+              <div class="form-group mt-2">
+                <label>Human Approval Threshold (₹)</label>
+                <input type="number" id="sim-cfg-human" class="form-control" value="10000" step="500">
+              </div>
+              <button type="submit" class="btn btn-indigo btn-block mt-3">🧪 Run Policy Simulation</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Simulation Results & Margin Impact</h3>
+            <p class="card-sub">Calculated net ARR recovery and contact overhead.</p>
+            <div id="sim-results-container" class="code-box">
+              <span class="text-muted">// Run simulation to see expected margin impact...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Human Review Queue -->
+      <div id="tab-human" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Human Review & Escalation Queue</h3>
+              <p class="card-sub">Transactions flagged by safety guardrails or circuit breaker requiring manual merchant decision.</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadHumanQueue()">🔄 Refresh Queue</button>
+          </div>
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>Amount</th>
+                  <th>Bank / Error</th>
+                  <th>Reason for Escalation</th>
+                  <th>AI Recommendation</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="human-queue-tbody">
+                <tr><td colspan="6" class="text-center py-4 text-muted">No items in human review queue.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Audit Ledger -->
+      <div id="tab-audit" class="tab-content">
+        <div class="card full-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Cryptographic Audit Chain (SHA-256)</h3>
+              <p class="card-sub">Immutable block ledger recording all webhook receptions, AI evaluations, and payment retries.</p>
+            </div>
+            <button class="btn btn-outline" onclick="loadAuditLogs()">🔍 Verify Chain Integrity</button>
+          </div>
+          <div id="audit-chain-container" class="audit-chain-list">
+            <!-- Dynamic Audit Cards -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail-modal" class="modal-overlay hidden" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 id="modal-title">Transaction AI Deep Inspection</h3>
+        <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Judge Mode Overlay Modal -->
+  <div id="judge-modal" class="modal-overlay hidden" onclick="toggleJudgeMode()">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 class="text-amber">🏆 RAZORPAY BUILDATHON — JUDGE EVALUATION PANEL</h3>
+        <button class="modal-close" onclick="toggleJudgeMode()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2col mb-3">
+          <div class="card">
+            <h4 class="text-indigo">🤖 AI & ML EVIDENCE</h4>
+            <p><strong>ML Accuracy:</strong> <span id="judge-accuracy">Loading...</span> | <strong>Precision:</strong> <span id="judge-precision">Loading...</span></p>
+            <p><strong>Recall:</strong> <span id="judge-recall">Loading...</span> | <strong>F1 Score:</strong> <span id="judge-f1">Loading...</span></p>
+            <p><strong>Action Selection:</strong> Expected Net Recovery Value ($EV$)</p>
+          </div>
+          <div class="card">
+            <h4 class="text-emerald">💰 BUSINESS IMPACT</h4>
+            <p><strong>Control-Tower Recovery:</strong> <span id="judge-recovery-rate">Loading...</span></p>
+            <p><strong>Incremental Recovered Revenue:</strong> <span id="judge-incremental">Loading...</span></p>
+            <p><strong>Baseline Comparison:</strong> <span id="judge-uplift">Loading...</span></p>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <h4 class="text-amber">🛡️ DETERMINISTIC SAFETY & RELIABILITY</h4>
+          <p>✓ <strong>Principle:</strong> AI recommends -> Deterministic Policy Validates -> Execution Layer Performs -> Audit Layer Records.</p>
+          <p>✓ <strong>Guardrails:</strong> Max 3 retries, 2-hr cooloff, 10% discount cap, min ₹100 threshold.</p>
+          <p>✓ <strong>Domain Protections:</strong> Late Authorization Protection, Downtime-Aware Method Switch, Idempotency, SHA-256 Ledger.</p>
+        </div>
+
+        <div class="card mb-3">
+          <h4 class="text-indigo">🧪 RELIABILITY EVIDENCE</h4>
+          <p class="card-sub">Results below are generated by the existing deterministic reliability lab and audit ledger.</p>
+          <div id="judge-reliability-evidence" class="code-box">Loading reliability evidence...</div>
+        </div>
+
+        <div class="card mb-3">
+          <h4 class="text-emerald">🧭 AGENT GOVERNANCE</h4>
+          <p><strong>Certification:</strong> <span id="agent-certification-status">Loading...</span> | <strong>Safety:</strong> <span id="agent-safety-score">Loading...</span></p>
+          <p><strong>Sandbox:</strong> <span id="agent-sandbox-summary">Loading...</span></p>
+          <p><strong>Health:</strong> <span id="agent-health-state">Loading...</span> | <strong>Reason:</strong> <span id="agent-health-reason">Loading...</span></p>
+          <button class="btn btn-outline" onclick="toggleAgentPause()" id="agent-kill-switch-btn">Loading...</button>
+        </div>
+
+        <div class="card mb-3">
+          <h4 class="text-indigo">📡 AGENT OPERATIONS</h4>
+          <p><strong>Recovery budget:</strong> <span id="agent-budget-status">Loading...</span></p>
+          <p><strong>Observability:</strong> <span id="agent-observability-status">Loading...</span></p>
+          <p><strong>Reliability forecast:</strong> <span id="agent-forecast-status">Loading...</span></p>
+        </div>
+
+        <button class="btn btn-emerald btn-block" onclick="runScenario('SCENARIO_1')">⚡ RUN DEMO SCENARIO 1 (Smart Retry)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
